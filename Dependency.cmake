@@ -2,7 +2,7 @@
 include(ExternalProject)
 
 # Dependency 관련 변수 설정
-set(DEP_INSTALL_DIR ${PROJECT_BINARY_DIR}/install)
+set(DEP_INSTALL_DIR ${PROJECT_BINARY_DIR}/install) #PROJECT_BINARY_DIR -> build 폴더
 set(DEP_INCLUDE_DIR ${DEP_INSTALL_DIR}/include)
 set(DEP_LIB_DIR ${DEP_INSTALL_DIR}/lib)
 
@@ -14,12 +14,13 @@ ExternalProject_Add(
     GIT_SHALLOW 1 #git에서 제일 최신 commit의 것만 다운
     UPDATE_COMMAND ""
     PATCH_COMMAND ""
-    CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${DEP_INSTALL_DIR} #설치 경로 지정
+    CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${DEP_INSTALL_DIR} #빌드 후 설치 경로 지정
     TEST_COMMAND ""
 )
 # Dependency 리스트 및 라이브러리 파일 리스트 추가
 set(DEP_LIST ${DEP_LIST} dep_spdlog)
-set(DEP_LIBS ${DEP_LIBS} spdlog$<$<CONFIG:Debug>:d>) #결국 "spdlogd"와 같음
+set(DEP_LIBS ${DEP_LIBS} spdlog$<$<CONFIG:Debug>:d>) #${DEP_LIBS}는 빈 변수 결국 spdlog + d 로 "spdlogd"와 같음
+                                                     #spdlog$<$<CONFIG:Debug>:d> config가 debug 모드면 d를 붙여라
 
 # glfw
 ExternalProject_Add(
@@ -30,7 +31,7 @@ ExternalProject_Add(
     UPDATE_COMMAND "" PATCH_COMMAND "" TEST_COMMAND ""
     CMAKE_ARGS
         -DCMAKE_INSTALL_PREFIX=${DEP_INSTALL_DIR}
-        -DGLFW_BUILD_EXAMPLES=OFF
+        -DGLFW_BUILD_EXAMPLES=OFF #필요없는 파일 제외
         -DGLFW_BUILD_TESTS=OFF
         -DGLFW_BUILD_DOCS=OFF
 )
